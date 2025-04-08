@@ -1,0 +1,24 @@
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`airquality.projectdar.aplab.be`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+      - "traefik.http.services.api.loadbalancer.server.port=5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+#      - ./backend/.enc:/app/.env
+    environment:
+      - NODE_ENV=development
+
+networks:
+  traefik:
+    external: true
